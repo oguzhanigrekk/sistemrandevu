@@ -1,0 +1,61 @@
+{
+    "id": "kuafor_realm",
+    "realm": "kuafor_realm",
+    "enabled": true,
+    "displayName": "Kuaför & Güzellik Merkezi",
+    "registrationAllowed": true,
+    "loginWithEmailAllowed": true,
+    "duplicateEmailsAllowed": false,
+    "resetPasswordAllowed": true,
+    "editUsernameAllowed": false,
+    "bruteForceProtected": true,
+    "roles": {
+        "realm": [
+            {
+                "name": "super_admin",
+                "description": "Sistem Yöneticisi"
+            },
+            {
+                "name": "branch_admin",
+                "description": "Şube Yöneticisi"
+            },
+            {
+                "name": "staff",
+                "description": "Personel"
+            },
+            {
+                "name": "customer",
+                "description": "Müşteri"
+            }
+        ]
+    },
+    "clients": [
+        {
+            "clientId": "kuafor-frontend",
+            "enabled": true,
+            "publicClient": true,
+            "directAccessGrantsEnabled": true,
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "rootUrl": "http://localhost:3000",
+            "adminUrl": "http://localhost:3000",
+            "redirectUris": [
+                "http://localhost:3000/*"
+            ],
+            "webOrigins": [
+                "+"
+            ]
+        },
+        {
+            "clientId": "kuafor-mobile",
+            "enabled": true,
+            "publicClient": true,
+            "directAccessGrantsEnabled": true,
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "redirectUris": [
+                "kuaforapp://*"
+            ]
+        }
+    ]
+}
