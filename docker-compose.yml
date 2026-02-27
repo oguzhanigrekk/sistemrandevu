@@ -41,8 +41,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HTTP_PORT: 8080
       KC_PROXY_HEADERS: "xforwarded"
-      KC_HOSTNAME_URL: "https://sistemrandevu.biasdanismanlik.com/auth"
-      KC_HOSTNAME_ADMIN_URL: "https://sistemrandevu.biasdanismanlik.com/auth"
+      KC_HOSTNAME_URL: "https://auth-sistemrandevu.biasdanismanlik.com"
+      KC_HOSTNAME_ADMIN_URL: "https://auth-sistemrandevu.biasdanismanlik.com"
       KC_HTTP_ENABLED: "true"
     ports:
       - "8080:8080"
@@ -84,7 +84,7 @@ services:
       AUTH_TRUST_HOST: "true"
       KEYCLOAK_ID: "${KEYCLOAK_ID:-nextjs-client}"
       KEYCLOAK_SECRET: "${KEYCLOAK_SECRET:-my-client-secret}"
-      KEYCLOAK_ISSUER: "${KEYCLOAK_ISSUER:-https://sistemrandevu.biasdanismanlik.com/auth/realms/kuafor_realm}"
+      KEYCLOAK_ISSUER: "${KEYCLOAK_ISSUER:-https://auth-sistemrandevu.biasdanismanlik.com/realms/kuafor_realm}"
     networks:
       - kuafor_network
 
