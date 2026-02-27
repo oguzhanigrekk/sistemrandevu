@@ -44,7 +44,6 @@ services:
       KC_HOSTNAME_URL: "https://sistemrandevu.biasdanismanlik.com/auth"
       KC_HOSTNAME_ADMIN_URL: "https://sistemrandevu.biasdanismanlik.com/auth"
       KC_HTTP_ENABLED: "true"
-      KC_FEATURES: "preview,declarative-user-profile"
     ports:
       - "8080:8080"
     volumes:
