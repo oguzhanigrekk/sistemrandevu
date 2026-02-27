@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 
 // Optionally, don't invoke Middleware on some paths
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg|.*\\.png|.*\\.jpg|.*\\.jpeg).*)"],
 }
 
 export default auth((req) => {
