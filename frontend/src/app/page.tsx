@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { MapPin, Star, Scissors, CalendarCheck, Clock, ShieldCheck, Map, Check, X, Building2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { NavbarAuthButtons, PricingAuthButton } from '@/components/AuthButtons';
 
 interface Salon {
   id: number;
@@ -100,10 +101,8 @@ export default function Home() {
               Sistem<span className="text-primary-500">Randevu</span>
             </span>
           </div>
-          <div className="flex gap-4">
-            <a href="http://localhost:8080/realms/kuafor_realm/account" className="flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-full bg-primary-600 text-white hover:bg-primary-500 transition-all shadow-md">
-              Giriş Yap / Kayıt Ol
-            </a>
+          <div className="flex gap-4 items-center">
+            <NavbarAuthButtons />
           </div>
         </div>
       </nav>
@@ -337,13 +336,11 @@ export default function Home() {
           </div>
 
           {/* CTA Buttons below table */}
-          <div className="max-w-5xl mx-auto mt-8 flex flex-col sm:flex-row items-center justify-end gap-4">
-            <a href="http://localhost:8080/realms/kuafor_realm/account" className="w-full sm:w-auto px-8 py-3 rounded-full border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors text-center">
-              14 Gün Ücretsiz Dene
+          <div className="max-w-5xl mx-auto mt-8 flex flex-col items-center justify-center sm:flex-row sm:justify-end gap-4">
+            <a href="https://wa.me/905386975882" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-8 py-3 rounded-full border border-green-500 text-green-600 dark:text-green-400 dark:border-green-600 font-bold hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors text-center shadow-sm">
+              Özel Paket İçin İletişime Geçin
             </a>
-            <a href="http://localhost:8080/realms/kuafor_realm/account" className="w-full sm:w-auto px-10 py-3 rounded-full bg-primary-600 text-white font-bold shadow-lg hover:bg-primary-500 hover:scale-105 transition-all text-center">
-              Hemen Satın Al (Standart)
-            </a>
+            <PricingAuthButton />
           </div>
         </section>
       </main>

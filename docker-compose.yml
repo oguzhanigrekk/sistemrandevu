@@ -73,6 +73,13 @@ services:
       dockerfile: Dockerfile
     container_name: kuafor_frontend
     restart: always
+    environment:
+      # NextAuth & Keycloak vars
+      AUTH_SECRET: "${AUTH_SECRET:-OH7mtsP5CNbgk4LeneH4D926TtclSvRPnmnJJcnDPoE=}"
+      AUTH_URL: "${AUTH_URL:-https://sistemrandevu.biasdanismanlik.com}"
+      KEYCLOAK_ID: "${KEYCLOAK_ID:-nextjs-client}"
+      KEYCLOAK_SECRET: "${KEYCLOAK_SECRET:-my-client-secret}"
+      KEYCLOAK_ISSUER: "${KEYCLOAK_ISSUER:-http://kuafor_keycloak:8080/realms/kuafor_realm}"
     networks:
       - kuafor_network
 
