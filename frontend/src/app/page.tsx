@@ -60,33 +60,36 @@ export default function Home() {
         });
     };
 
+    const fetchFallbackIPLocation = () => {
+      fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(data => {
+          if (data.latitude && data.longitude) {
+            fetchSalons(data.latitude, data.longitude);
+          } else {
+            setLocationError("Konumunuz tespit edilemedi.");
+            setLoadingLocation(false);
+          }
+        })
+        .catch(err => {
+          setLocationError("Konumunuz tespit edilemedi.");
+          setLoadingLocation(false);
+        });
+    };
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           fetchSalons(position.coords.latitude, position.coords.longitude);
         },
         (error) => {
-          let errorMsg = "Bilinmeyen bir hata oluştu.";
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMsg = "Kullanıcı konum isteğini reddetti.";
-              break;
-            case error.POSITION_UNAVAILABLE:
-              errorMsg = "Konum bilgisi şu anda kullanılamıyor.";
-              break;
-            case error.TIMEOUT:
-              errorMsg = "Konum isteği zaman aşımına uğradı.";
-              break;
-          }
-          // Log Exception for user
-          setLocationError(`Konum Hatası: ${errorMsg} (${error.message})`);
-          setLoadingLocation(false);
+          console.warn("HTML5 Location Blocked, falling back to IP...", error);
+          fetchFallbackIPLocation();
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: true, maximumAge: 0 }
       );
     } else {
-      setLocationError("Tarayıcınız konum servisini desteklemiyor veya güvenli bağlantı (HTTPS) gerekliği nedeniyle engellendi.");
-      setLoadingLocation(false);
+      fetchFallbackIPLocation();
     }
   }, []);
 
