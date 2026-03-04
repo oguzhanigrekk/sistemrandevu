@@ -29,7 +29,7 @@ export async function NavbarAuthButtons() {
 
 export async function PricingAuthButton() {
     return (
-        <Link href="/register" className="w-full sm:w-auto px-10 py-3 rounded-full bg-primary-600 text-white font-bold shadow-lg hover:bg-primary-500 hover:scale-105 transition-all text-center">
+        <Link href="/register?type=B2B" className="w-full sm:w-auto px-10 py-3 rounded-full bg-primary-600 text-white font-bold shadow-lg hover:bg-primary-500 hover:scale-105 transition-all text-center">
             Hemen Satın Al (Standart)
         </Link>
     )

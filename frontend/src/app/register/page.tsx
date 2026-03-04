@@ -1,17 +1,39 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Scissors, AlertCircle, Loader2, Building2, User } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function RegisterPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
+                <Loader2 className="animate-spin text-primary-500" size={40} />
+            </div>
+        }>
+            <RegisterForm />
+        </Suspense>
+    );
+}
+
+function RegisterForm() {
     const router = useRouter();
-    const [tab, setTab] = useState<"B2C" | "B2B">("B2C");
+    const searchParams = useSearchParams();
+    const initialType = searchParams.get("type") === "B2B" ? "B2B" : "B2C";
+
+    const [tab, setTab] = useState<"B2C" | "B2B">(initialType);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
+
+    // If query param changes, update tab
+    useEffect(() => {
+        const type = searchParams.get("type");
+        if (type === "B2B") setTab("B2B");
+        else if (type === "B2C") setTab("B2C");
+    }, [searchParams]);
 
     // B2C Form Data
     const [b2cName, setB2cName] = useState("");
