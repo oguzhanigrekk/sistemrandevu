@@ -82,7 +82,7 @@ services:
       AUTH_SECRET: "${AUTH_SECRET:-OH7mtsP5CNbgk4LeneH4D926TtclSvRPnmnJJcnDPoE=}"
       AUTH_URL: "${AUTH_URL:-https://sistemrandevu.biasdanismanlik.com}"
       AUTH_TRUST_HOST: "true"
-      KEYCLOAK_ID: "${KEYCLOAK_ID:-nextjs-client}"
+      KEYCLOAK_ID: "${KEYCLOAK_ID:-kuafor-frontend}"
       KEYCLOAK_SECRET: "${KEYCLOAK_SECRET:-my-client-secret}"
       KEYCLOAK_ISSUER: "${KEYCLOAK_ISSUER:-https://auth-sistemrandevu.biasdanismanlik.com/realms/kuafor_realm}"
     networks:
