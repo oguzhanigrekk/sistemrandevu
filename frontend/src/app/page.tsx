@@ -44,11 +44,17 @@ export default function Home() {
 
   useEffect(() => {
     let isLocationHandled = false;
+    const controller = new AbortController();
+    const fetchSignal = controller.signal;
+
+    console.log("[v2] useEffect mounted: starting location detection");
 
     const fetchSalons = (lat: number, lon: number) => {
-      fetch(`/api/public/branches/nearby?lat=${lat}&lon=${lon}&radius=50`)
+      console.log(`[v2] fetching salons for lat: ${lat}, lon: ${lon}`);
+      fetch(`/api/public/branches/nearby?lat=${lat}&lon=${lon}&radius=50`, { signal: fetchSignal })
         .then(res => res.json())
         .then(data => {
+          console.log("[v2] API response:", data);
           if (data.status === 'success') {
             setNearbySalons(data.data || []);
           } else {
@@ -57,15 +63,19 @@ export default function Home() {
           setLoadingLocation(false);
         })
         .catch((err) => {
+          if (err.name === 'AbortError') return;
+          console.error("[v2] fetchSalons error:", err);
           setLocationError("Sunucu bağlantı hatası: " + err.message);
           setLoadingLocation(false);
         });
     };
 
     const fetchFallbackIPLocation = () => {
-      fetch("https://ipapi.co/json/")
+      console.log("[v2] falling back to IP based location (ipapi.co)");
+      fetch("https://ipapi.co/json/", { signal: fetchSignal })
         .then(res => res.json())
         .then(data => {
+          console.log("[v2] IP API response:", data);
           if (data.latitude && data.longitude) {
             fetchSalons(data.latitude, data.longitude);
           } else {
@@ -74,6 +84,8 @@ export default function Home() {
           }
         })
         .catch(err => {
+          if (err.name === 'AbortError') return;
+          console.error("[v2] fetchFallbackIPLocation error:", err);
           setLocationError("Konumunuz tespit edilemedi.");
           setLoadingLocation(false);
         });
@@ -82,18 +94,18 @@ export default function Home() {
     const handleTimeout = () => {
       if (!isLocationHandled) {
         isLocationHandled = true;
-        console.warn("Manuel konum sorma süresi doldu, IP adresinden bulunuyor...");
+        console.warn("[v2] Manuel konum sorma süresi doldu (5sn), IP adresinden bulunuyor...");
         fetchFallbackIPLocation();
       }
     };
 
-    // Tarayıcı bazen kendi timeout'unu işletmez (özellikle izin penceresi açık beklerse).
-    // Bu yüzden 5 saniye sonra manuel olarak IP fallback'i çalıştırıyoruz.
     const fallbackTimer = setTimeout(handleTimeout, 5000);
 
     if (navigator.geolocation) {
+      console.log("[v2] Requesting getCurrentPosition");
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log("[v2] getCurrentPosition Success", position.coords);
           if (!isLocationHandled) {
             isLocationHandled = true;
             clearTimeout(fallbackTimer);
@@ -101,16 +113,17 @@ export default function Home() {
           }
         },
         (error) => {
+          console.warn("[v2] getCurrentPosition Error/Timeout", error);
           if (!isLocationHandled) {
             isLocationHandled = true;
             clearTimeout(fallbackTimer);
-            console.warn("HTML5 Location Error/Timeout, falling back to IP...", error);
             fetchFallbackIPLocation();
           }
         },
         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
       );
     } else {
+      console.log("[v2] No geolocation support");
       if (!isLocationHandled) {
         isLocationHandled = true;
         clearTimeout(fallbackTimer);
@@ -118,7 +131,11 @@ export default function Home() {
       }
     }
 
-    return () => clearTimeout(fallbackTimer);
+    return () => {
+      console.log("[v2] useEffect unmounted: cleaning up");
+      clearTimeout(fallbackTimer);
+      controller.abort();
+    };
   }, []);
 
   return (
@@ -161,8 +178,9 @@ export default function Home() {
             {loadingLocation ? (
               <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 shadow-sm text-center">
                 <div className="w-12 h-12 border-4 border-primary-500/30 border-t-primary-500 rounded-full animate-spin mb-4" />
-                <h3 className="text-xl font-bold dark:text-white mb-2">Konumunuz Aranıyor</h3>
+                <h3 className="text-xl font-bold dark:text-white mb-2">Konum Aranıyor (v2)</h3>
                 <p className="text-neutral-500">Size en yakın şubeleri bulmak için konum izni bekleniyor...</p>
+                <div className="mt-8 text-xs text-neutral-400">Eğer bu ekran takılı kalıyorsa lütfen F12 Konsol Çıktısını kontrol edin.</div>
               </div>
             ) : locationError !== null || nearbySalons.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-neutral-900 rounded-3xl border border-red-100 dark:border-red-900 shadow-sm text-center">
