@@ -42,19 +42,25 @@ export default function Home() {
   const [loadingLocation, setLoadingLocation] = useState(true);
   const [locationError, setLocationError] = useState<string | null>(null);
 
+  // Ekranda adımları görebilmek için eklendi:
+  const [debugLog, setDebugLog] = useState<string[]>([]);
+  const addLog = (msg: string) => {
+    setDebugLog(prev => [...prev.slice(-10), `${new Date().toLocaleTimeString()} - ${msg}`]);
+  };
+
   useEffect(() => {
     let isLocationHandled = false;
     const controller = new AbortController();
     const fetchSignal = controller.signal;
 
-    console.log("[v2] useEffect mounted: starting location detection");
+    addLog("[v3] useEffect mounted: starting location detection");
 
     const fetchSalons = (lat: number, lon: number) => {
-      console.log(`[v2] fetching salons for lat: ${lat}, lon: ${lon}`);
+      addLog(`fetching salons lat/lon: ${lat}, ${lon}`);
       fetch(`/api/public/branches/nearby?lat=${lat}&lon=${lon}&radius=50`, { signal: fetchSignal })
         .then(res => res.json())
         .then(data => {
-          console.log("[v2] API response:", data);
+          addLog(`API response status: ${data.status}`);
           if (data.status === 'success') {
             setNearbySalons(data.data || []);
           } else {
@@ -64,18 +70,18 @@ export default function Home() {
         })
         .catch((err) => {
           if (err.name === 'AbortError') return;
-          console.error("[v2] fetchSalons error:", err);
+          addLog(`fetchSalons error: ${err.message}`);
           setLocationError("Sunucu bağlantı hatası: " + err.message);
           setLoadingLocation(false);
         });
     };
 
     const fetchFallbackIPLocation = () => {
-      console.log("[v2] falling back to IP based location (ipapi.co)");
+      addLog("falling back to IP based location (ipapi.co)");
       fetch("https://ipapi.co/json/", { signal: fetchSignal })
         .then(res => res.json())
         .then(data => {
-          console.log("[v2] IP API response:", data);
+          addLog("IP API response received");
           if (data.latitude && data.longitude) {
             fetchSalons(data.latitude, data.longitude);
           } else {
@@ -85,7 +91,7 @@ export default function Home() {
         })
         .catch(err => {
           if (err.name === 'AbortError') return;
-          console.error("[v2] fetchFallbackIPLocation error:", err);
+          addLog(`fetchFallback error: ${err.message}`);
           setLocationError("Konumunuz tespit edilemedi.");
           setLoadingLocation(false);
         });
@@ -94,7 +100,7 @@ export default function Home() {
     const handleTimeout = () => {
       if (!isLocationHandled) {
         isLocationHandled = true;
-        console.warn("[v2] Manuel konum sorma süresi doldu (5sn), IP adresinden bulunuyor...");
+        addLog("Manuel konum sorma süresi doldu (5sn), IP'ye geçiliyor...");
         fetchFallbackIPLocation();
       }
     };
@@ -102,10 +108,10 @@ export default function Home() {
     const fallbackTimer = setTimeout(handleTimeout, 5000);
 
     if (navigator.geolocation) {
-      console.log("[v2] Requesting getCurrentPosition");
+      addLog("Requesting navigator.geolocation.getCurrentPosition");
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log("[v2] getCurrentPosition Success", position.coords);
+          addLog("getCurrentPosition Success");
           if (!isLocationHandled) {
             isLocationHandled = true;
             clearTimeout(fallbackTimer);
@@ -113,7 +119,7 @@ export default function Home() {
           }
         },
         (error) => {
-          console.warn("[v2] getCurrentPosition Error/Timeout", error);
+          addLog(`getCurrentPosition Error: ${error.message}`);
           if (!isLocationHandled) {
             isLocationHandled = true;
             clearTimeout(fallbackTimer);
@@ -123,7 +129,7 @@ export default function Home() {
         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
       );
     } else {
-      console.log("[v2] No geolocation support");
+      addLog("No geolocation support on navigator");
       if (!isLocationHandled) {
         isLocationHandled = true;
         clearTimeout(fallbackTimer);
@@ -132,7 +138,7 @@ export default function Home() {
     }
 
     return () => {
-      console.log("[v2] useEffect unmounted: cleaning up");
+      addLog("useEffect unmounted: cleaning up");
       clearTimeout(fallbackTimer);
       controller.abort();
     };
@@ -175,10 +181,20 @@ export default function Home() {
           </div>
 
           <div className="min-h-[300px]">
+            {/* Ekranda v3 debug logları */}
+            {debugLog.length > 0 && (
+              <div className="bg-neutral-900 text-green-400 font-mono text-xs p-4 rounded-xl mb-4 max-w-2xl mx-auto shadow-lg text-left overflow-hidden break-words">
+                <div className="text-white mb-2 pb-2 border-b border-neutral-700 font-bold">Debug Window (v3)</div>
+                {debugLog.map((log, i) => (
+                  <div key={i}>{log}</div>
+                ))}
+              </div>
+            )}
+
             {loadingLocation ? (
               <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 shadow-sm text-center">
                 <div className="w-12 h-12 border-4 border-primary-500/30 border-t-primary-500 rounded-full animate-spin mb-4" />
-                <h3 className="text-xl font-bold dark:text-white mb-2">Konum Aranıyor (v2)</h3>
+                <h3 className="text-xl font-bold dark:text-white mb-2">Konum Aranıyor (v3)</h3>
                 <p className="text-neutral-500">Size en yakın şubeleri bulmak için konum izni bekleniyor...</p>
                 <div className="mt-8 text-xs text-neutral-400">Eğer bu ekran takılı kalıyorsa lütfen F12 Konsol Çıktısını kontrol edin.</div>
               </div>
