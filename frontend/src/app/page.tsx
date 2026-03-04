@@ -83,10 +83,10 @@ export default function Home() {
           fetchSalons(position.coords.latitude, position.coords.longitude);
         },
         (error) => {
-          console.warn("HTML5 Location Blocked, falling back to IP...", error);
+          console.warn("HTML5 Location Error/Timeout, falling back to IP...", error);
           fetchFallbackIPLocation();
         },
-        { enableHighAccuracy: true, maximumAge: 0 }
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
       );
     } else {
       fetchFallbackIPLocation();
