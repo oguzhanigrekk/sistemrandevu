@@ -86,7 +86,7 @@ services:
       KEYCLOAK_SECRET: "${KEYCLOAK_SECRET:-my-client-secret}"
       KEYCLOAK_ISSUER: "${KEYCLOAK_ISSUER:-https://auth-sistemrandevu.biasdanismanlik.com/realms/kuafor_realm}"
       KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "Oguzhan1907!"
     networks:
       - kuafor_network
 
