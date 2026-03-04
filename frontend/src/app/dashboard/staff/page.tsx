@@ -33,8 +33,8 @@ export default function StaffPage() {
                 <button
                     disabled={isLimitReached}
                     className={`flex items-center gap-2 px-6 py-3 font-bold rounded-2xl transition-all shadow-lg ${isLimitReached
-                            ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed shadow-none"
-                            : "bg-primary-600 hover:bg-primary-500 text-white shadow-primary-600/20 hover:scale-105 active:scale-95"
+                        ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed shadow-none"
+                        : "bg-primary-600 hover:bg-primary-500 text-white shadow-primary-600/20 hover:scale-105 active:scale-95"
                         }`}
                 >
                     <Plus size={18} />
@@ -91,7 +91,7 @@ export default function StaffPage() {
                                 <div className="flex items-center gap-2 mb-1">
                                     <h3 className="text-xl font-black text-neutral-900 dark:text-white">{person.name}</h3>
                                     {person.role === "Şube Yöneticisi" && (
-                                        <ShieldCheck size={16} className="text-primary-500" title="Yönetici" />
+                                        <ShieldCheck size={16} className="text-primary-500" />
                                     )}
                                 </div>
                                 <span className="px-3 py-1 bg-neutral-100 dark:bg-neutral-800 rounded-full text-[10px] font-black uppercase text-neutral-500 tracking-wider">
