@@ -11,6 +11,8 @@ export default auth((req) => {
     // @ts-ignore
     const userRole = req.auth?.user?.role
 
+    console.log(`Middleware Trace: Path=${pathname}, LoggedIn=${isLoggedIn}, Role=${userRole}`);
+
     const isApiRoute = pathname.startsWith("/api")
     const isPublicRoute = pathname === "/" || pathname.startsWith("/public")
 

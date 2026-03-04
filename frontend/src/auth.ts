@@ -76,11 +76,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     const user = await userResponse.json();
 
+                    // Extract role from the access token (decode JWT locally)
+                    let role = "customer";
+                    try {
+                        const payloadBase64 = tokens.access_token.split('.')[1];
+                        const payload = JSON.parse(Buffer.from(payloadBase64, 'base64').toString());
+                        if (payload.realm_access?.roles?.includes("branch_admin")) {
+                            role = "branch_admin";
+                        }
+                    } catch (e) {
+                        console.error("Role extraction error:", e);
+                    }
+
                     return {
                         id: user.sub,
                         name: user.name || user.preferred_username,
                         email: user.email,
                         accessToken: tokens.access_token,
+                        role: role
                     };
                 } catch (error: any) {
                     throw new Error(error.message || "Giriş yapılırken bir hata oluştu.");
@@ -111,12 +124,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     }
                 }
             }
-            // For Credentials provider, `user` contains the accessToken returned from authorize()
-            if (user && 'accessToken' in user) {
+            // For Credentials provider, `user` contains the object returned from authorize()
+            if (user && 'role' in user) {
+                token.role = (user as any).role;
                 token.accessToken = (user as any).accessToken;
-                // Assuming we can define role for credentials if needed, but primarily for keycloak
-                // For direct login (credentials), we might need another way to fetch roles if not in user object
             }
+
+            console.log("JWT Callback - Token Role:", token.role);
             return token
         },
         async session({ session, token }) {
