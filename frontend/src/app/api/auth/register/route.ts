@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 
 async function getAdminToken() {
     const tokenUrl = "http://kuafor_keycloak:8080/realms/master/protocol/openid-connect/token";
+    const username = process.env.KEYCLOAK_ADMIN || "admin";
+    const password = process.env.KEYCLOAK_ADMIN_PASSWORD || "admin";
 
     const body = new URLSearchParams({
         client_id: "admin-cli",
         grant_type: "password",
-        username: process.env.KEYCLOAK_ADMIN || "admin",
-        password: process.env.KEYCLOAK_ADMIN_PASSWORD || "admin",
+        username: username,
+        password: password,
     });
 
     const res = await fetch(tokenUrl, {
@@ -17,7 +19,9 @@ async function getAdminToken() {
     });
 
     if (!res.ok) {
-        throw new Error("Failed to authenticate with Keycloak Admin API");
+        const errText = await res.text();
+        console.error(`Keycloak Admin Auth Failed. Status: ${res.status}, Body: ${errText}`);
+        throw new Error(`Failed to authenticate with Keycloak Admin API: ${res.status}`);
     }
 
     const data = await res.json();
