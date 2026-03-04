@@ -16,9 +16,14 @@ export async function NavbarAuthButtons() {
     }
 
     return (
-        <Link href="/login" className="flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-full bg-primary-600 text-white hover:bg-primary-500 transition-all shadow-md">
-            Giriş Yap / Kayıt Ol
-        </Link>
+        <div className="flex gap-3">
+            <Link href="/login" className="px-5 py-2 text-sm font-bold rounded-full bg-primary-600 text-white hover:bg-primary-500 transition-all shadow-md shadow-primary-600/20">
+                Giriş Yap
+            </Link>
+            <Link href="/register" className="px-5 py-2 text-sm font-bold rounded-full bg-white text-neutral-800 border border-neutral-200 hover:bg-neutral-50 transition-all shadow-sm">
+                Kayıt Ol
+            </Link>
+        </div>
     )
 }
 

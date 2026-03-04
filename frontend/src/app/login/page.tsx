@@ -55,9 +55,25 @@ export default function LoginPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-3xl shadow-xl border border-neutral-100 dark:border-neutral-800 p-8"
             >
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl font-black text-neutral-900 dark:text-white mb-2">Hoş Geldiniz</h1>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Hesabınıza giriş yaparak randevularınızı yönetin.</p>
+                <div className="space-y-4 mb-8">
+                    <button
+                        onClick={() => signIn("keycloak")}
+                        className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all font-bold text-neutral-700 dark:text-neutral-300 shadow-sm"
+                    >
+                        <div className="w-5 h-5 relative flex items-center justify-center">
+                            <Scissors className="text-primary-500" size={18} />
+                        </div>
+                        Keycloak ile Giriş Yap
+                    </button>
+
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-neutral-200 dark:border-neutral-800"></div>
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-white dark:bg-neutral-900 px-4 text-neutral-500 font-medium tracking-wider">veya</span>
+                        </div>
+                    </div>
                 </div>
 
                 {error && (

@@ -118,6 +118,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session
         },
     },
-    // Adding debug logging to identify nextauth metadata discovery issues
-    debug: true,
+    trustHost: true,
 })
