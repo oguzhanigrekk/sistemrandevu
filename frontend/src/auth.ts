@@ -95,15 +95,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         signIn: "/login",
     },
     callbacks: {
-        async jwt({ token, account, user }) {
-            if (account) {
+        async jwt({ token, account, user, profile }) {
+            if (account && profile) {
                 token.accessToken = account.access_token
                 token.idToken = account.id_token
                 token.expiresAt = account.expires_at
+
+                // Extract roles from Keycloak profile (realm_access.roles)
+                const realmAccess = (profile as any).realm_access;
+                if (realmAccess && Array.isArray(realmAccess.roles)) {
+                    if (realmAccess.roles.includes("branch_admin")) {
+                        token.role = "branch_admin";
+                    } else if (realmAccess.roles.includes("customer")) {
+                        token.role = "customer";
+                    }
+                }
             }
             // For Credentials provider, `user` contains the accessToken returned from authorize()
             if (user && 'accessToken' in user) {
-                token.accessToken = user.accessToken;
+                token.accessToken = (user as any).accessToken;
+                // Assuming we can define role for credentials if needed, but primarily for keycloak
+                // For direct login (credentials), we might need another way to fetch roles if not in user object
             }
             return token
         },
@@ -114,6 +126,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             if (token?.sub && session.user) {
                 session.user.id = token.sub;
+            }
+            if (token?.role && session.user) {
+                // @ts-ignore
+                session.user.role = token.role;
             }
             return session
         },
