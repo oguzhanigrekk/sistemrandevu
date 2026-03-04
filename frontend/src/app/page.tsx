@@ -43,6 +43,8 @@ export default function Home() {
   const [locationError, setLocationError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isLocationHandled = false;
+
     const fetchSalons = (lat: number, lon: number) => {
       fetch(`/api/public/branches/nearby?lat=${lat}&lon=${lon}&radius=50`)
         .then(res => res.json())
@@ -77,20 +79,46 @@ export default function Home() {
         });
     };
 
+    const handleTimeout = () => {
+      if (!isLocationHandled) {
+        isLocationHandled = true;
+        console.warn("Manuel konum sorma süresi doldu, IP adresinden bulunuyor...");
+        fetchFallbackIPLocation();
+      }
+    };
+
+    // Tarayıcı bazen kendi timeout'unu işletmez (özellikle izin penceresi açık beklerse).
+    // Bu yüzden 5 saniye sonra manuel olarak IP fallback'i çalıştırıyoruz.
+    const fallbackTimer = setTimeout(handleTimeout, 5000);
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          fetchSalons(position.coords.latitude, position.coords.longitude);
+          if (!isLocationHandled) {
+            isLocationHandled = true;
+            clearTimeout(fallbackTimer);
+            fetchSalons(position.coords.latitude, position.coords.longitude);
+          }
         },
         (error) => {
-          console.warn("HTML5 Location Error/Timeout, falling back to IP...", error);
-          fetchFallbackIPLocation();
+          if (!isLocationHandled) {
+            isLocationHandled = true;
+            clearTimeout(fallbackTimer);
+            console.warn("HTML5 Location Error/Timeout, falling back to IP...", error);
+            fetchFallbackIPLocation();
+          }
         },
         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
       );
     } else {
-      fetchFallbackIPLocation();
+      if (!isLocationHandled) {
+        isLocationHandled = true;
+        clearTimeout(fallbackTimer);
+        fetchFallbackIPLocation();
+      }
     }
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   return (
